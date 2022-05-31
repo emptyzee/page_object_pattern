@@ -1,3 +1,4 @@
+import allure
 from .base_page import BasePage
 from selenium.webdriver.common.by import By
 from .locators import PlayGround1
@@ -7,6 +8,7 @@ from selenium.webdriver import ActionChains
 import time
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
+from allure_commons.types import AttachmentType
 
 class PlayGround(BasePage):
     def data_ajax(self): # тест клика и ожидания появления текста
@@ -57,6 +59,9 @@ class PlayGround(BasePage):
         fakealert2accept = self.browser.find_element(*PlayGround1.FAKEALERT1ACCEPT).click()
         time.sleep(3)
 
+    @allure.feature("Check_html_form") # декоратор, отметка в коде при помощи которых будут генериться отчёты,заголовок отчёта
+    @allure.story("Проверяем заполнение хтмл формы") # этот аллюр конкретизирует наши действия в отчёте
+    @allure.severity("Blocker") # важность теста
     def basic_html_form(self): # заполнение html формы 
         self.browser.execute_script("window.scrollBy(0, 150);")
         username = self.browser.find_element(*PlayGround1.USERNAME).send_keys("Alex")
@@ -76,8 +81,13 @@ class PlayGround(BasePage):
         select2.select_by_value("dd5")
         time.sleep(5)
         submitbutton = self.browser.find_element(*PlayGround1.SUBMITBUTTON).click()
+        with allure.step("Делаем скриншот"):
+            allure.attach(self.browser.get_screenshot_as_png(), name="screenshot", attachment_type=AttachmentType.PNG)#делаем скриншот данным методом
         time.sleep(5)
 
+    @allure.feature("Buttons_click_check")
+    @allure.story("Тестируем нажатие кнопок")
+    @allure.severity("Critical")
     def buttons_click(self): # тест нажатия кнопок
         onblur = self.browser.find_element(*PlayGround1.ONBLUR).click()
         achains = ActionChains(self.browser)
@@ -106,6 +116,10 @@ class PlayGround(BasePage):
         mousedown = self.browser.find_element(*PlayGround1.MOUSEDOWN).click()
         time.sleep(5)
 
+
+    @allure.feature("dynamic_button_waits")
+    @allure.story("Нажатие кнопок с ожиданием их появления")
+    @allure.severity("Critical")
     def dynamic_button(self): #динамические кнопки с ожиданием
         firstbutton = self.browser.find_element(*PlayGround1.FIRSTBUTTON).click()
         secondbuttonwait = WebDriverWait(self.browser, 6).until(
@@ -118,6 +132,9 @@ class PlayGround(BasePage):
             EC.visibility_of_element_located((By.CSS_SELECTOR, "#button03")))
         fourthbuttonclick = self.browser.find_element(*PlayGround1.FOURTHBUTTON).click()
 
+    @allure.feature("dynamic_button_waits2")
+    @allure.story("Нажатие кнопок с ожиданием их доступности")
+    @allure.severity("Critical")
     def dynamic_ec_located(self): # ожидание и клик по кнопке
         firstbutton = self.browser.find_element(*PlayGround1.FIRSTBUTTON).click()
         secondbuttonwait = WebDriverWait(self.browser, 10).until(
@@ -129,5 +146,5 @@ class PlayGround(BasePage):
         fourthbuttonwait = WebDriverWait(self.browser, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "#button03")))
         fourthbuttonclick = self.browser.find_element(*PlayGround1.FOURTHBUTTON).click()
-        time.sleep(5)
+        time.sleep(5) # ещё можно добавить assert self.browser.title == "Google" чтобы просто проверить, что мы на нужном сайте
          
